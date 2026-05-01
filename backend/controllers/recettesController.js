@@ -31,7 +31,7 @@ exports.getOne = async (req, res) => {
 // ============================================
 exports.create = async (req, res) => {
   try {
-    const recette = await recettesService.createRecette(req.body);
+    const recette = await recettesService.createRecette(req.body, req.file);
     res.status(201).json(recette);
   } catch (err) {
     console.error('Erreur create :', err);
@@ -44,7 +44,7 @@ exports.create = async (req, res) => {
 // ============================================
 exports.update = async (req, res) => {
   try {
-    const recette = await recettesService.updateRecette(req.params.id, req.body);
+    const recette = await recettesService.updateRecette(req.params.id, req.body, req.file);
     res.json(recette);
   } catch (err) {
     console.error('Erreur update :', err);
@@ -61,6 +61,19 @@ exports.delete = async (req, res) => {
     res.json(result);
   } catch (err) {
     console.error('Erreur delete :', err);
+    res.status(404).json({ error: err.message });
+  }
+};
+
+// ============================================
+// DELETE PHOTO RECETTE
+// ============================================
+exports.deletePhoto = async (req, res) => {
+  try {
+    const recette = await recettesService.deletePhotoRecette(req.params.id);
+    res.json(recette);
+  } catch (err) {
+    console.error('Erreur deletePhoto :', err);
     res.status(404).json({ error: err.message });
   }
 };
