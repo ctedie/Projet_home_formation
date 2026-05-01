@@ -22,10 +22,32 @@ const sequelize = new Sequelize(
 // ============================================
 const Utilisateur = require('./Utilisateur')(sequelize);
 const Recette = require('./Recette')(sequelize);
+const Favori = require('./Favori')(sequelize);
 
 // ============================================
-// ASSOCIATIONS (à compléter plus tard)
+// ASSOCIATIONS
 // ============================================
+// Un utilisateur a plusieurs favoris
+Utilisateur.hasMany(Favori, {
+  foreignKey: 'UtilisateurId',
+  onDelete: 'CASCADE',
+});
+
+// Une recette a plusieurs favoris
+Recette.hasMany(Favori, {
+  foreignKey: 'RecetteId',
+  onDelete: 'CASCADE',
+});
+
+// Un favori appartient à un utilisateur
+Favori.belongsTo(Utilisateur, {
+  foreignKey: 'UtilisateurId',
+});
+
+// Un favori appartient à une recette
+Favori.belongsTo(Recette, {
+  foreignKey: 'RecetteId',
+});
 
 // ============================================
 // EXPORT
@@ -34,4 +56,5 @@ module.exports = {
   sequelize,
   Utilisateur,
   Recette,
+  Favori,
 };
