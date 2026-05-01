@@ -13,24 +13,23 @@ const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     dialect: 'mysql',
-    logging: false, // Mettre à true pour voir les requêtes SQL
+    logging: false,
   }
 );
 
 // ============================================
-// MODELS (à importer au fur et à mesure)
+// MODELS
 // ============================================
-// À compléter dans les prochaines issues
-// const Utilisateur = require('./Utilisateur')(sequelize);
-// const Recette = require('./Recette')(sequelize);
-// const Favori = require('./Favori')(sequelize);
+const Utilisateur = require('./Utilisateur')(sequelize);
+
+// ============================================
+// ASSOCIATIONS (à compléter plus tard)
+// ============================================
 
 // ============================================
 // EXPORT
 // ============================================
 module.exports = {
   sequelize,
-  // Utilisateur,
-  // Recette,
-  // Favori,
+  Utilisateur,
 };
