@@ -1,6 +1,6 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { BrowserRouter, Routes, Route, NavLink, useNavigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import Accueil from './pages/Accueil';
 import Recettes from './pages/Recettes';
 import Favoris from './pages/Favoris';
@@ -9,6 +9,14 @@ import Admin from './pages/Admin';
 import './App.scss';
 
 function NavBar() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
       <div className="container-fluid">
@@ -35,21 +43,37 @@ function NavBar() {
                 Recettes
               </NavLink>
             </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/favoris">
-                ⭐ Favoris
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/login">
-                Connexion
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/admin">
-                Admin
-              </NavLink>
-            </li>
+            {user && (
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/favoris">
+                  ⭐ Favoris
+                </NavLink>
+              </li>
+            )}
+            {user?.role === 'admin' && (
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/admin">
+                  Admin
+                </NavLink>
+              </li>
+            )}
+            {user ? (
+              <li className="nav-item">
+                <button
+                  className="nav-link btn btn-link"
+                  onClick={handleLogout}
+                  style={{ textDecoration: 'none', color: 'rgba(255, 255, 255, 0.8)' }}
+                >
+                  Déconnexion ({user.nom})
+                </button>
+              </li>
+            ) : (
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/login">
+                  Connexion
+                </NavLink>
+              </li>
+            )}
           </ul>
         </div>
       </div>
