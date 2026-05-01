@@ -21,9 +21,9 @@ app.use('/uploads', express.static('uploads'));
 // ============================================
 // ROUTES
 // ============================================
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/recettes', require('./routes/recettes'));
 // À compléter dans les prochaines issues
-// app.use('/api/auth', require('./routes/auth'));
-// app.use('/api/recettes', require('./routes/recettes'));
 // app.use('/api/favoris', require('./routes/favoris'));
 
 // ============================================
