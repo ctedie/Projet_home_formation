@@ -1,4 +1,5 @@
 const { Recette } = require('../models');
+const { deleteFile } = require('../utils/fileUtils');
 
 // ============================================
 // GET ALL RECETTES
@@ -32,10 +33,14 @@ exports.getRecetteById = async (id) => {
 // ============================================
 // CREATE RECETTE
 // ============================================
-exports.createRecette = async (data) => {
+exports.createRecette = async (data, file) => {
   try {
     // Validation
     if (!data.nom || data.nom.trim() === '') {
+      // Supprimer l'image si elle a été uploadée
+      if (file) {
+        deleteFile(`/uploads/${file.filename}`);
+      }
       throw new Error('Le nom de la recette est requis');
     }
 
@@ -48,6 +53,7 @@ exports.createRecette = async (data) => {
       categorie: data.categorie || 'plat',
       temps: data.temps,
       portions: data.portions ? parseInt(data.portions) : null,
+      photo: file ? `/uploads/${file.filename}` : null,
     });
 
     return recette;
@@ -59,16 +65,28 @@ exports.createRecette = async (data) => {
 // ============================================
 // UPDATE RECETTE
 // ============================================
-exports.updateRecette = async (id, data) => {
+exports.updateRecette = async (id, data, file) => {
   try {
     const recette = await Recette.findByPk(id);
     if (!recette) {
+      // Supprimer l'image si elle a été uploadée
+      if (file) {
+        deleteFile(`/uploads/${file.filename}`);
+      }
       throw new Error('Recette introuvable');
     }
 
     // Validation
     if (data.nom && data.nom.trim() === '') {
+      if (file) {
+        deleteFile(`/uploads/${file.filename}`);
+      }
       throw new Error('Le nom de la recette ne peut pas être vide');
+    }
+
+    // Si une nouvelle image est fournie, supprimer l'ancienne
+    if (file && recette.photo) {
+      deleteFile(recette.photo);
     }
 
     await recette.update({
@@ -80,6 +98,7 @@ exports.updateRecette = async (id, data) => {
       categorie: data.categorie,
       temps: data.temps,
       portions: data.portions ? parseInt(data.portions) : null,
+      photo: file ? `/uploads/${file.filename}` : recette.photo,
     });
 
     return recette;
@@ -98,8 +117,37 @@ exports.deleteRecette = async (id) => {
       throw new Error('Recette introuvable');
     }
 
+    // Supprimer la photo si elle existe
+    if (recette.photo) {
+      deleteFile(recette.photo);
+    }
+
     await recette.destroy();
     return { message: 'Recette supprimée avec succès' };
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+// ============================================
+// DELETE PHOTO RECETTE
+// ============================================
+exports.deletePhotoRecette = async (id) => {
+  try {
+    const recette = await Recette.findByPk(id);
+    if (!recette) {
+      throw new Error('Recette introuvable');
+    }
+
+    // Supprimer la photo si elle existe
+    if (recette.photo) {
+      deleteFile(recette.photo);
+    }
+
+    // Mettre à jour la recette (photo = null)
+    await recette.update({ photo: null });
+
+    return recette;
   } catch (err) {
     throw new Error(err.message);
   }
