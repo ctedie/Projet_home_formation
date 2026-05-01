@@ -1,0 +1,39 @@
+// ============================================
+// COULEURS
+// ============================================
+$primary: #0b59eb;
+$secondary: #373b3f;
+$success: #198754;
+$danger: #dc3545;
+$warning: #ffc107;
+$info: #0dcaf0;
+$light: #f8f9fa;
+$dark: #1a1a1a;
+
+// Couleurs recettes
+$color-entree: #198754;
+$color-plat: #e25a0a;
+$color-dessert: #fc4c8f;
+$color-boisson: #58d0ff;
+
+// ============================================
+// TYPOGRAPHIE
+// ============================================
+$font-family-base: 'Lato', sans-serif;
+$font-family-serif: 'Georgia', serif;
+$font-size-base: 1rem;
+$font-size-lg: 1.25rem;
+$font-size-sm: 0.875rem;
+
+// ============================================
+// SPACING
+// ============================================
+$spacer: 1rem;
+$border-radius: 12px;
+$border-radius-sm: 8px;
+
+// ============================================
+// TRANSITIONS
+// ============================================
+$transition-base: all 0.2s ease;
+$transition-fade: opacity 0.15s linear;
