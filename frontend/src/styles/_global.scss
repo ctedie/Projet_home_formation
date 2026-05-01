@@ -1,0 +1,155 @@
+@import './variables';
+
+// ============================================
+// RESET & BASE
+// ============================================
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  color: $dark;
+  background-color: $light;
+}
+
+// ============================================
+// TYPOGRAPHIE
+// ============================================
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-family-serif;
+  font-weight: 700;
+  color: $dark;
+  margin-bottom: 1rem;
+}
+
+p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+a {
+  color: $primary;
+  text-decoration: none;
+  transition: $transition-base;
+
+  &:hover {
+    color: darken($primary, 10%);
+  }
+}
+
+// ============================================
+// NAVBAR
+// ============================================
+.navbar {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  .navbar-brand {
+    font-family: $font-family-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .nav-link {
+    transition: $transition-base;
+
+    &:hover {
+      color: $light !important;
+    }
+
+    &.active {
+      color: $light !important;
+      border-bottom: 2px solid $light;
+    }
+  }
+}
+
+// ============================================
+// BOUTONS
+// ============================================
+.btn {
+  border-radius: $border-radius-sm;
+  font-weight: 500;
+  transition: $transition-base;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// ============================================
+// CARTES
+// ============================================
+.card {
+  border: none;
+  border-radius: $border-radius;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: $transition-base;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// ============================================
+// MODALES
+// ============================================
+.modal-content {
+  border-radius: $border-radius;
+  border: none;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+// ============================================
+// FORMULAIRES
+// ============================================
+.form-control, .form-select {
+  border-radius: $border-radius-sm;
+  border: 1px solid #ddd;
+  transition: $transition-base;
+
+  &:focus {
+    border-color: $primary;
+    box-shadow: 0 0 0 0.2rem rgba($primary, 0.25);
+  }
+}
+
+// ============================================
+// ALERTES
+// ============================================
+.alert {
+  border-radius: $border-radius-sm;
+  border: none;
+}
+
+// ============================================
+// UTILITAIRES
+// ============================================
+.page-title {
+  font-family: $font-family-serif;
+  font-size: 2rem;
+  color: $dark;
+  margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+  color: $secondary;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.text-muted {
+  color: $secondary !important;
+}
+
+main {
+  min-height: calc(100vh - 60px);
+}

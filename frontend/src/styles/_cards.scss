@@ -1,0 +1,156 @@
+@import './variables';
+
+// ============================================
+// RECIPE CARD
+// ============================================
+.recipe-card {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: none;
+  border-radius: $border-radius;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba($primary, 0.15);
+  }
+
+  &__img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    background: $light;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+  }
+
+  &__title {
+    font-family: $font-family-serif;
+    font-size: 1rem;
+    color: $dark;
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+  }
+
+  &__description {
+    font-size: 0.85rem;
+    color: $secondary;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex-grow: 1;
+  }
+
+  &__footer {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 0.4rem 1rem;
+    color: #ffffff;
+
+    &--entree {
+      background: $color-entree;
+    }
+
+    &--plat {
+      background: $color-plat;
+    }
+
+    &--dessert {
+      background: $color-dessert;
+    }
+
+    &--boisson {
+      background: $color-boisson;
+      color: $dark;
+    }
+  }
+}
+
+// ============================================
+// RECIPE MODAL
+// ============================================
+.recipe-modal {
+  &__header {
+    background: $primary;
+    color: #ffffff;
+
+    .btn-close {
+      filter: invert(1);
+    }
+  }
+
+  &__img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    background: $light;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5rem;
+  }
+
+  &__badge {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 0.3rem 0.75rem;
+    border-radius: 50px;
+    color: #ffffff;
+    display: inline-block;
+
+    &--entree {
+      background: $color-entree;
+    }
+
+    &--plat {
+      background: $color-plat;
+    }
+
+    &--dessert {
+      background: $color-dessert;
+    }
+
+    &--boisson {
+      background: $color-boisson;
+      color: $dark;
+    }
+  }
+
+  &__section-title {
+    font-family: $font-family-serif;
+    color: $primary;
+    margin-bottom: 0.5rem;
+    margin-top: 1rem;
+    font-weight: 600;
+  }
+}
+
+// ============================================
+// FAVORITE BUTTON
+// ============================================
+.favorite-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  transition: $transition-base;
+  padding: 0;
+
+  &.active {
+    color: $color-dessert;
+  }
+
+  &:hover {
+    transform: scale(1.2);
+  }
+}
