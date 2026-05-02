@@ -1,245 +1,504 @@
-# 🍽️ Projet Recette - Partie Formation
+# 🍽️ Application de Gestion de Recettes
 
-Application web de gestion de recettes avec authentification et système de favoris.
+**Projet TP DWWM (CEF) - Formation Développeur Web et Web Mobile**
 
-**Développé dans le cadre du TP DWWM (Développeur Web et Web Mobile)**
+Étudiant : **Cédric TEDIE**  
+Date : **02/05/2026**
 
 ---
 
 ## 📋 Table des matières
-- [Features](#features)
-- [Tech Stack](#tech-stack)
+
+- [Présentation](#présentation)
+- [Stack technologique](#stack-technologique)
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Utilisation](#utilisation)
 - [Architecture](#architecture)
-- [Compétences couvertes](#compétences-couvertes)
+- [Endpoints API](#endpoints-api)
+- [Fonctionnalités](#fonctionnalités)
+- [Base de données](#base-de-données)
+- [Notes importantes](#notes-importantes)
 
 ---
 
-## ✨ Features
+## 🎯 Présentation
 
-### Frontend
-- 🎨 Interface moderne et responsive (React + Bootstrap + SCSS)
-- 🔐 Authentification par JWT
-- 🍽️ Affichage des recettes en grille de cartes
-- 🔍 Recherche et filtres par catégorie
-- ⭐ Gestion des favoris (utilisateur connecté)
-- 📱 Modal détaillée pour chaque recette
-- 👨‍💼 Panel admin pour gérer utilisateurs et recettes
+Application web fullstack de gestion de recettes avec :
+- ✅ Authentification avec JWT
+- ✅ Système de favoris
+- ✅ CRUD complet des recettes (admin)
+- ✅ Gestion des utilisateurs (admin)
+- ✅ Upload d'images
+- ✅ Interface responsive
 
-### Backend
-- 🔐 Authentification JWT
-- 📊 Base de données MySQL avec Sequelize ORM
-- 📸 Upload d'images avec Multer
-- ✅ Validation des données
-- 🛡️ Middlewares d'authentification et autorisation
-- 📦 API RESTful complète
+### Utilisateurs de test
 
-### Base de données
-- 👤 Utilisateurs (avec gestion des rôles : admin/membre)
-- 🍲 Recettes (nom, description, ingrédients, étapes, catégorie, temps, portions, photo, auteur)
-- ⭐ Favoris (liaison Utilisateur ↔ Recette)
+```
+Nom : admin
+Mot de passe : admin123
+Rôle : Administrateur
+```
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Stack technologique
 
-### Backend
-- **Node.js** avec **Express.js**
-- **MySQL** avec **Sequelize ORM**
-- **JWT** pour l'authentification
-- **Multer** pour les uploads d'images
-- **bcryptjs** pour le hashage des mots de passe
-- **CORS** pour les requêtes cross-origin
-
-### Frontend
-- **React 19** avec React Router
-- **Bootstrap 5** pour le styling
-- **SCSS** pour les styles personnalisés
-- **Axios** pour les requêtes HTTP
-- **Context API** pour la gestion d'état
-
-### DevOps
-- **Git** + **GitHub**
-- **npm** pour la gestion des dépendances
-- Workflow : Issues → Branches → Pull Requests → Merge
+| Catégorie | Technologies |
+|-----------|--------------|
+| **Frontend** | React 19, React Router v7, Bootstrap 5, SCSS, Axios |
+| **Backend** | Node.js v20, Express 5, Sequelize 6, MySQL2 |
+| **Authentification** | JWT, bcryptjs |
+| **Upload** | Multer |
+| **Outils** | Git, GitHub, PowerShell, XAMPP |
 
 ---
 
 ## 📦 Installation
 
 ### Prérequis
-- Node.js (v18 ou supérieur)
-- npm ou yarn
-- MySQL (via XAMPP)
-- Git
 
-### Étapes
+- **Node.js v20+** : https://nodejs.org/
+- **MySQL** (via XAMPP) : https://www.apachefriends.org/
+- **Git** : https://git-scm.com/
 
-#### 1. Cloner le repository
+### Clone du repo
+
 ```bash
-git clone https://github.com/[tonCompte]/Projet_home_formation.git
+git clone https://github.com/[ton-compte]/Projet_home_formation.git
 cd Projet_home_formation
 ```
 
-#### 2. Configuration Backend
+### Installation Backend
 
 ```bash
 cd backend
 npm install
 ```
 
-Créer un fichier `.env` à partir de `.env.example` :
-```bash
-cp .env.example .env
-```
-
-Configurer les variables d'environnement avec tes identifiants MySQL (voir [Configuration](#configuration))
-
-#### 3. Configuration Frontend
+### Installation Frontend
 
 ```bash
-cd ../frontend
+cd frontend
 npm install
 ```
-
-Le proxy est déjà configuré dans `package.json` pour pointer vers `http://localhost:3001`
-
-#### 4. Créer la base de données MySQL
-
-Avec phpMyAdmin ou en ligne de commande :
-```sql
-CREATE DATABASE projet_recette;
-```
-
-Sequelize créera automatiquement les tables au premier démarrage (mode `alter: true`)
 
 ---
 
 ## ⚙️ Configuration
 
-### Variables d'environnement Backend (.env)
+### 1. Configuration MySQL
 
-Créer un fichier `.env` dans le dossier `backend/` :
+1. Ouvre **XAMPP Control Panel**
+2. Clique sur **Start** pour Apache et MySQL
+3. Ouvre **phpMyAdmin** : http://localhost/phpmyadmin
+4. Crée une base de données : `projet_recette`
+
+```sql
+CREATE DATABASE IF NOT EXISTS projet_recette;
+USE projet_recette;
+```
+
+### 2. Configuration Backend
+
+Crée le fichier `backend/.env` :
 
 ```env
-# Port du serveur
-PORT=3001
-
 # Base de données
 DB_HOST=127.0.0.1
 DB_USER=root
 DB_PASSWORD=
 DB_NAME=projet_recette
 
-# JWT Secret
-JWT_SECRET=votre_clé_secrète_très_longue_et_complexe_ici_min_32_caractères
+# JWT
+JWT_SECRET=ton_secret_jwt_tres_long_et_secure_2026
 
-# Environment
+# Port
+PORT=3001
+
+# Environnement
 NODE_ENV=development
 ```
 
-**⚠️ Important :** Ne jamais committer le fichier `.env` (ignoré par `.gitignore`)
+**IMPORTANT :** 
+- `DB_HOST` doit être `127.0.0.1` (pas `localhost`)
+- Le fichier `.env` doit être dans le dossier `backend/`, pas à la racine
+
+### 3. Création de l'utilisateur admin
+
+Va dans phpMyAdmin et exécute ce script SQL :
+
+```sql
+USE projet_recette;
+
+-- Insérer l'admin (mot de passe: admin123)
+INSERT INTO utilisateurs (nom, motDePasse, role, createdAt, updatedAt) 
+VALUES ('admin', '$2a$10$[hash_bcrypt_du_mot_de_passe]', 'admin', NOW(), NOW());
+```
+
+Pour générer le hash du mot de passe, dans PowerShell :
+
+```powershell
+node -e "const bcrypt = require('bcryptjs'); bcrypt.hash('admin123', 10, (err, hash) => console.log(hash));"
+```
+
+Copie le hash et remplace `[hash_bcrypt_du_mot_de_passe]` par le hash généré.
+
+### 4. Insertion des recettes
+
+Pour insérer 20 recettes de test, exécute le script SQL fourni :
+
+- Fichier : `backend/seed.sql`
+- Ouvre ce fichier dans phpMyAdmin SQL et exécute-le
 
 ---
 
 ## 🚀 Utilisation
 
-### Démarrer le serveur backend
+### Démarrage du Backend
 
 ```bash
 cd backend
 npm run dev
 ```
 
-Le serveur démarre sur `http://localhost:3001`
+Résultat attendu :
+```
+✅ Connexion MySQL OK
+✅ Serveur démarré sur http://localhost:3001
+```
 
-### Démarrer l'application frontend
+### Démarrage du Frontend
 
-Dans un autre terminal :
+Dans un **nouveau terminal PowerShell** :
 
 ```bash
 cd frontend
 npm start
 ```
 
-L'app ouvre sur `http://localhost:3000`
+L'application s'ouvre automatiquement sur http://localhost:3000
 
-### Tester l'API
+### Arrêt
 
-Endpoint de santé :
-```bash
-curl http://localhost:3001/api/health
-```
+- Backend : `Ctrl + C` dans le terminal
+- Frontend : `Ctrl + C` dans le terminal
 
 ---
 
 ## 🏗️ Architecture
 
-### Structure Backend
+### Flux de données
 
+```
+Frontend (React)
+    ↓
+   API (Axios)
+    ↓
+Backend (Express)
+    ↓ Router
+   Controller
+    ↓ Service
+   Model (Sequelize)
+    ↓
+MySQL Database
+```
+
+### Structure des dossiers
+
+#### Backend
+
+```
 backend/
-├── models/              # Modèles Sequelize
-├── controllers/         # Logique métier
-├── routes/              # Définition des routes API
-├── middlewares/         # Auth, upload, validation
-├── uploads/             # Images uploadées
-├── .env                 # Variables d'environnement
-├── index.js             # Point d'entrée
-└── package.json
+├── .env                    ← Variables d'environnement
+├── index.js               ← Serveur Express principal
+├── package.json
+├── models/                ← Modèles Sequelize
+│   ├── index.js
+│   ├── Utilisateur.js
+│   ├── Recette.js
+│   └── Favori.js
+├── services/              ← Logique métier
+│   ├── recettesService.js
+│   └── favorisService.js
+├── controllers/           ← Orchestration des requêtes
+│   ├── authController.js
+│   ├── recettesController.js
+│   └── favorisController.js
+├── routes/                ← Définition des routes
+│   ├── auth.js
+│   ├── recettes.js
+│   └── favoris.js
+├── middlewares/           ← Middlewares personnalisés
+│   ├── auth.js           ← JWT, isAuthenticated, isAdmin
+│   └── upload.js         ← Multer configuration
+├── utils/
+│   └── fileUtils.js      ← Utilitaires fichiers
+└── uploads/              ← Images stockées ici
+```
 
-### Structure Frontend
+#### Frontend
 
-frontend/
-├── public/              # Assets statiques
-├── src/
-│   ├── pages/           # Pages
-│   ├── components/      # Composants réutilisables
-│   ├── context/         # AuthContext
-│   ├── api/             # Appels API
-│   ├── styles/          # SCSS
-│   ├── App.js
-│   └── index.js
-└── package.json
+```
+frontend/src/
+├── pages/                 ← Pages de l'application
+│   ├── Accueil.js        ← Page d'accueil avec cartes
+│   ├── Recettes.js       ← Affichage des recettes
+│   ├── Favoris.js        ← Recettes favorites
+│   ├── Login.js          ← Formulaire de connexion
+│   └── Admin.js          ← Panel d'administration
+├── components/            ← Composants réutilisables
+│   ├── RecetteCard.js    ← Carte recette
+│   └── RecetteModal.js   ← Modale détails
+├── services/              ← Appels API
+│   ├── recettesService.js
+│   └── adminService.js
+├── context/               ← Context API
+│   └── AuthContext.js    ← Gestion de l'authentification
+├── api/
+│   └── index.js          ← Configuration Axios
+├── styles/                ← Styles SCSS
+│   ├── _variables.scss
+│   ├── _global.scss
+│   ├── _cards.scss
+│   └── App.scss
+├── App.js                ← Composant principal
+└── index.js              ← Point d'entrée
+```
 
 ---
 
-## 🎓 Compétences couvertes (TP DWWM)
+## 📡 Endpoints API
 
-### Activité 1 : Front-end
-- ✅ Maquetter des interfaces utilisateur web
-- ✅ Réaliser des interfaces utilisateur statiques web
-- ✅ Développer la partie dynamique des interfaces utilisateur web
+### Authentification
 
-### Activité 2 : Back-end
-- ✅ Mettre en place une base de données relationnelle
-- ✅ Développer des composants d'accès aux données (SQL)
-- ✅ Développer des composants métier côté serveur
+| Méthode | Route | Authentification | Description |
+|---------|-------|------------------|-------------|
+| POST | `/api/auth/login` | Public | Connexion utilisateur |
+| GET | `/api/auth/me` | Authentifiée | Infos utilisateur connecté |
+| GET | `/api/auth/utilisateurs` | Admin | Liste des utilisateurs |
+| PUT | `/api/auth/utilisateurs/:id` | Admin | Modifier rôle utilisateur |
+| DELETE | `/api/auth/utilisateurs/:id` | Admin | Supprimer utilisateur |
 
-### Optionnelles
-- ✅ Gestion des uploads d'images
-- ✅ Système d'authentification avancé
-- ✅ Gestion des utilisateurs et rôles
+### Recettes
+
+| Méthode | Route | Authentification | Description |
+|---------|-------|------------------|-------------|
+| GET | `/api/recettes` | Public | Lister toutes les recettes |
+| GET | `/api/recettes/:id` | Public | Détail d'une recette |
+| POST | `/api/recettes` | Admin | Créer une recette |
+| PUT | `/api/recettes/:id` | Admin | Modifier une recette |
+| DELETE | `/api/recettes/:id` | Admin | Supprimer une recette |
+| DELETE | `/api/recettes/:id/photo` | Admin | Supprimer la photo |
+
+### Favoris
+
+| Méthode | Route | Authentification | Description |
+|---------|-------|------------------|-------------|
+| GET | `/api/favoris` | Authentifiée | Mes favoris |
+| POST | `/api/favoris/:id` | Authentifiée | Ajouter aux favoris |
+| DELETE | `/api/favoris/:id` | Authentifiée | Retirer des favoris |
+| GET | `/api/favoris/:id` | Authentifiée | Vérifier si en favoris |
+
+---
+
+## ✨ Fonctionnalités
+
+### 👤 Authentification
+
+- ✅ Formulaire de login (nom + mot de passe)
+- ✅ JWT pour sécuriser les requêtes
+- ✅ Mot de passe hashé avec bcryptjs
+- ✅ Stockage du token en localStorage
+- ✅ Déconnexion avec suppression du token
+
+### 🍽️ Gestion des recettes
+
+- ✅ Afficher toutes les recettes
+- ✅ Filtrer par catégorie (Entrée, Plat, Dessert, Boisson)
+- ✅ Rechercher par nom en temps réel
+- ✅ Voir détails complets en modale
+- ✅ Créer/modifier/supprimer (admin uniquement)
+- ✅ Upload et gestion des photos
+- ✅ Formulaire avec validation
+
+### ⭐ Système de favoris
+
+- ✅ Ajouter une recette aux favoris
+- ✅ Retirer une recette des favoris
+- ✅ Page dédiée aux favoris
+- ✅ Icône ⭐ pour identifier les favoris
+- ✅ Recherche et filtres dans les favoris
+- ✅ Requis d'être authentifié
+
+### 👨‍💼 Panel Admin
+
+**Onglet Recettes :**
+- ✅ Liste des recettes
+- ✅ Créer une recette
+- ✅ Modifier une recette
+- ✅ Supprimer une recette (avec confirmation)
+- ✅ Upload d'images
+
+**Onglet Utilisateurs :**
+- ✅ Liste de tous les utilisateurs
+- ✅ Modifier le rôle (admin/membre)
+- ✅ Supprimer un utilisateur (avec confirmation)
+- ✅ Impossible de se supprimer soi-même
+
+### 📱 Interface utilisateur
+
+- ✅ Design responsive (mobile, tablet, desktop)
+- ✅ Bootstrap 5 pour les composants
+- ✅ SCSS personnalisé
+- ✅ NavBar avec menu burger
+- ✅ Modales pour les détails
+- ✅ Messages de succès/erreur
+- ✅ Loading states
+- ✅ Menu burger se ferme automatiquement
+
+---
+
+## 🗄️ Base de données
+
+### Tables
+
+#### utilisateurs
+```sql
+CREATE TABLE utilisateurs (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  nom VARCHAR(255) UNIQUE NOT NULL,
+  motDePasse VARCHAR(255) NOT NULL,
+  role ENUM('admin', 'membre') DEFAULT 'membre',
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+```
+
+#### recettes
+```sql
+CREATE TABLE recettes (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  nom VARCHAR(255) NOT NULL,
+  description TEXT,
+  ingredients TEXT,
+  etapes TEXT,
+  auteur VARCHAR(255),
+  categorie ENUM('entree', 'plat', 'dessert', 'boisson'),
+  temps VARCHAR(50),
+  portions INT,
+  photo VARCHAR(255),
+  UtilisateurId INT,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (UtilisateurId) REFERENCES utilisateurs(id)
+);
+```
+
+#### favoris
+```sql
+CREATE TABLE favoris (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  UtilisateurId INT NOT NULL,
+  RecetteId INT NOT NULL,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (UtilisateurId) REFERENCES utilisateurs(id),
+  FOREIGN KEY (RecetteId) REFERENCES recettes(id)
+);
+```
+
+### Relations
+
+```
+Utilisateur (1) ──→ (N) Recette
+Utilisateur (N) ←──→ (M) Recette (via Favori)
+```
+
+---
+
+## 📝 Notes importantes
+
+### Sécurité
+
+- ✅ JWT pour l'authentification
+- ✅ Mots de passe hashés avec bcryptjs
+- ✅ Middleware `isAdmin` pour protéger les routes admin
+- ✅ Token validé à chaque requête authentifiée
+- ✅ CORS configuré
+
+### Chemins importants
+
+- **Configuration backend** : `backend/.env` (IMPORTANT : dans le dossier backend/)
+- **Images uploadées** : `backend/uploads/`
+- **Images accessibles** : `http://localhost:3001/uploads/[nom-image]`
+
+### Variables d'environnement
+
+Backend `.env` DOIT contenir :
+```env
+DB_HOST=127.0.0.1        # Pas localhost
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=projet_recette
+JWT_SECRET=ton_secret
+PORT=3001
+NODE_ENV=development
+```
+
+### Commandes utiles
+
+```bash
+# Démarrer le backend (avec nodemon)
+cd backend && npm run dev
+
+# Démarrer le frontend
+cd frontend && npm start
+
+# Installer les dépendances
+npm install
+
+# Voir les logs
+# Backend : regarde la console du terminal
+# Frontend : regarde DevTools (F12)
+```
+
+### Troubleshooting
+
+**Erreur : "Can't resolve './context/AuthContext'"**
+- Solution : Vérifie que le fichier existe et que les imports sont corrects
+
+**Erreur : "Module not found: Error: Can't resolve 'api'"**
+- Solution : Vérifie le chemin `frontend/src/api/index.js`
+
+**Erreur : "Connection refused" (MySQL)**
+- Solution : Démarre XAMPP et lance MySQL
+
+**Erreur : ".env not found"**
+- Solution : Crée le fichier `backend/.env` (pas à la racine !)
 
 ---
 
 ## 📚 Ressources
 
-- [Express.js Documentation](https://expressjs.com/)
-- [React Documentation](https://react.dev/)
-- [Sequelize Documentation](https://sequelize.org/)
-- [Bootstrap Documentation](https://getbootstrap.com/)
-- [JWT Introduction](https://jwt.io/)
+- [React Documentation](https://react.dev)
+- [Express Documentation](https://expressjs.com)
+- [Sequelize Documentation](https://sequelize.org)
+- [Bootstrap 5 Documentation](https://getbootstrap.com/docs/5.0)
+- [JWT Authentication](https://jwt.io)
 
 ---
 
-## 👨‍💻 Auteur
+## 👤 Auteur
 
-Développé dans le cadre de la formation **TP DWWM** au **CEF (Centre Européen de Formation)**
+**Cédric TEDIE**  
+Formation DWWM - CEF  
+02/05/2026
 
 ---
 
-## 📄 Licence
+## 📄 License
 
-ISC
+Projet pédagogique - Tous droits réservés
+
+---
