@@ -10,7 +10,7 @@ exports.getMesFavoris = async (utilisateurId) => {
       include: [
         {
           model: Recette,
-          attributes: ['id', 'nom', 'description', 'categorie', 'temps', 'portions', 'photo'],
+          attributes: ['id', 'nom', 'description', 'ingredients', 'etapes', 'categorie', 'temps', 'portions', 'photo'],
         },
       ],
       order: [['createdAt', 'DESC']],
