@@ -47,4 +47,9 @@ export const addFavori = (recetteId) => api.post(`/favoris/${recetteId}`);
 export const removeFavori = (recetteId) => api.delete(`/favoris/${recetteId}`);
 export const isFavori = (recetteId) => api.get(`/favoris/${recetteId}`);
 
+// ============================================
+// utilisateurs
+// ============================================
+export const createUtilisateur = (data) => api.post('/auth/utilisateurs', data);
+
 export default api;

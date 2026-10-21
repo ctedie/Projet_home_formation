@@ -127,3 +127,38 @@ exports.deleteUtilisateur = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// ============================================
+// CREATE UTILISATEUR (ADMIN ONLY) 
+// ============================================ 
+exports.creerUtilisateur = async (req, res) => { 
+  try { 
+    const { nom, motDePasse, role } = req.body;
+    if (!nom || !motDePasse) { 
+      return res.status(400).json({ error: 'Le nom et le mot de passe sont requis' }); 
+    } 
+    // Vérifier si le nom existe déjà 
+    const userExists = await Utilisateur.findOne({ where: { nom } }); 
+    if (userExists) { 
+      return res.status(400).json({ error: 'Ce nom d\'utilisateur est déjà pris' }); 
+    } 
+    // Hacher le mot de passe 
+    const hashedPassword = await bcrypt.hash(motDePasse, 10); 
+    const userRole = role === 'admin' ? 'admin' : 'membre'; 
+    // Créer l'utilisateur 
+    const newUser = await Utilisateur.create({ 
+      nom, 
+      motDePasse: hashedPassword, 
+      role: userRole, 
+    }); 
+    
+    res.status(201).json({ 
+      id: newUser.id, 
+      nom: newUser.nom, 
+      role: newUser.role, 
+    }); 
+  } catch (err) { 
+    console.error('Erreur creerUtilisateur :', err); 
+    res.status(500).json({ error: err.message }); 
+  } 
+};

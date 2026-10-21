@@ -4,6 +4,16 @@ import * as api from '../api';
 // UTILISATEURS
 // ============================================
 
+export const createUtilisateur = async (userData) => {
+  try {
+    const response = await api.default.post('/auth/utilisateurs', userData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.error || 'Erreur lors de la création de l\'utilisateur';
+  }
+};
+
+
 export const getUtilisateurs = async () => {
   try {
     const response = await api.default.get('/auth/utilisateurs');

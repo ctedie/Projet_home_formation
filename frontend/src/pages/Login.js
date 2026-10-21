@@ -111,8 +111,6 @@ function Login() {
 
           {/* ASTUCE POUR TESTER */}
           <div className="alert alert-info mt-4 small">
-            <strong>Pour tester :</strong> Utilise les identifiants que tu as créés en base de données.
-            <br />
             Par défaut : <code>nom: admin</code>, <code>motDePasse: admin123</code>
           </div>
         </div>

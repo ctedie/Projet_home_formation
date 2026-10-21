@@ -19,6 +19,7 @@ function Admin() {
   const [activeTab, setActiveTab] = useState('recettes');
   const [recettes, setRecettes] = useState([]);
   const [utilisateurs, setUtilisateurs] = useState([]);
+  const [showUserForm, setShowUserForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -223,6 +224,31 @@ function Admin() {
       setLoading(false);
     }
   };
+
+  const [userForm, setUserForm] = useState({ nom: '', motDePasse: '', role: 'membre', });
+
+const handleCreateUtilisateur = async (e) => { 
+  e.preventDefault(); 
+  if (!userForm.nom.trim() || !userForm.motDePasse.trim()) { 
+    setError('Le nom et le mot de passe sont requis'); 
+    return; 
+  } 
+
+  try { 
+    setLoading(true); 
+    const newUser = await adminService.createUtilisateur(userForm); 
+    setUtilisateurs([...utilisateurs, newUser]); 
+    setUserForm({ nom: '', motDePasse: '', role: 'membre' }); 
+    setShowUserForm(false); 
+    setSuccess('Utilisateur créé avec succès'); 
+    setTimeout(() => setSuccess(''), 3000); 
+  } catch (err) { 
+    setError(err); 
+  } finally { 
+    setLoading(false); 
+  } 
+};
+
 
   if (!isAdmin) {
     return null;
@@ -442,60 +468,117 @@ function Admin() {
       )}
 
       {/* TAB UTILISATEURS */}
-      {activeTab === 'utilisateurs' && (
-        <div>
-          {loading && activeTab === 'utilisateurs' ? (
-            <p className="text-muted">Chargement...</p>
-          ) : (
-            <div className="table-responsive">
-              <table className="table table-hover">
-                <thead className="table-light">
-                  <tr>
-                    <th>Nom</th>
-                    <th>Rôle</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {utilisateurs.map(utilisateur => (
-                    <tr key={utilisateur.id}>
-                      <td>{utilisateur.nom}</td>
-                      <td>
-                        <span
-                          className={`badge ${
-                            utilisateur.role === 'admin' ? 'bg-danger' : 'bg-secondary'
-                          }`}
-                        >
-                          {ROLE_LABELS[utilisateur.role]}
-                        </span>
-                      </td>
-                      <td>
-                        <select
-                          className="form-select form-select-sm d-inline w-auto me-2"
-                          value={utilisateur.role}
-                          onChange={(e) => handleUpdateRole(utilisateur.id, e.target.value)}
-                          disabled={loading || utilisateur.id === user.id}
-                        >
-                          <option value="membre">Membre</option>
-                          <option value="admin">Administrateur</option>
-                        </select>
-                        <button
-                          className="btn btn-sm btn-danger"
-                          onClick={() => handleDeleteUtilisateur(utilisateur.id)}
-                          disabled={loading || utilisateur.id === user.id}
-                          title={utilisateur.id === user.id ? 'Impossible de se supprimer soi-même' : ''}
-                        >
-                          🗑️ Supprimer
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+
+{activeTab === 'utilisateurs' && (
+  <div>
+    <div className="d-flex justify-content-between align-items-center mb-3">
+      <h3>Liste des Utilisateurs</h3>
+      <button
+        className="btn btn-success"
+        onClick={() => setShowUserForm(!showUserForm)}
+      >
+        {showUserForm ? 'Annuler' : '➕ Ajouter un utilisateur'}
+      </button>
+    </div>
+
+    {/* Formulaire d'ajout d'utilisateur */}
+    {showUserForm && (
+      <form onSubmit={handleCreateUtilisateur} className="card card-body mb-4 bg-light">
+        <h5 className="card-title mb-3">Nouveau compte utilisateur</h5>
+        <div className="row g-3">
+          <div className="col-md-5">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Nom d'utilisateur"
+              value={userForm.nom}
+              onChange={(e) => setUserForm({ ...userForm, nom: e.target.value })}
+              required
+            />
+          </div>
+          <div className="col-md-4">
+            <input
+              type="password"
+              className="form-control"
+              placeholder="Mot de passe"
+              value={userForm.motDePasse}
+              onChange={(e) => setUserForm({ ...userForm, motDePasse: e.target.value })}
+              required
+            />
+          </div>
+          <div className="col-md-3">
+            <select
+              className="form-select"
+              value={userForm.role}
+              onChange={(e) => setUserForm({ ...userForm, role: e.target.value })}
+            >
+              <option value="membre">Membre</option>
+              <option value="admin">Administrateur</option>
+            </select>
+          </div>
         </div>
-      )}
+        <div className="mt-3">
+          <button type="submit" className="btn btn-primary" disabled={loading}>
+            {loading ? 'Création...' : 'Créer l\'utilisateur'}
+          </button>
+        </div>
+      </form>
+    )}
+
+    {/* Tableau des utilisateurs existant */}
+    {loading && activeTab === 'utilisateurs' ? (
+      <p className="text-muted">Chargement...</p>
+    ) : (
+      <div className="table-responsive">
+        <table className="table table-hover">
+          <thead className="table-light">
+            <tr>
+              <th>Nom</th>
+              <th>Rôle</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {utilisateurs.map(utilisateur => (
+              <tr key={utilisateur.id}>
+                <td>{utilisateur.nom}</td>
+                <td>
+                  <span
+                    className={`badge ${
+                      utilisateur.role === 'admin' ? 'bg-danger' : 'bg-secondary'
+                    }`}
+                  >
+                    {ROLE_LABELS[utilisateur.role]}
+                  </span>
+                </td>
+                <td>
+                  <select
+                    className="form-select form-select-sm d-inline w-auto me-2"
+                    value={utilisateur.role}
+                    onChange={(e) => handleUpdateRole(utilisateur.id, e.target.value)}
+                    disabled={loading || utilisateur.id === user.id}
+                  >
+                    <option value="membre">Membre</option>
+                    <option value="admin">Administrateur</option>
+                  </select>
+                  <button
+                    className="btn btn-sm btn-danger"
+                    onClick={() => handleDeleteUtilisateur(utilisateur.id)}
+                    disabled={loading || utilisateur.id === user.id}
+                    title={utilisateur.id === user.id ? 'Impossible de se supprimer soi-même' : ''}
+                  >
+                    🗑️ Supprimer
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </div>
+)}
+
     </div>
   );
 }
